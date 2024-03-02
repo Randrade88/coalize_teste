@@ -1,0 +1,14 @@
+# Use the official MySQL 8 image from Docker Hub
+FROM mysql:8
+
+# Set environment variables for MySQL
+ENV MYSQL_ROOT_PASSWORD=coalize
+ENV MYSQL_DATABASE=coalize_database
+ENV MYSQL_USER=coalize
+ENV MYSQL_PASSWORD=coalize
+
+# Optionally, you can add a custom configuration file
+# COPY ./custom_mysql_config.cnf /etc/mysql/conf.d/custom_mysql_config.cnf
+
+# Expose the MySQL port
+EXPOSE 3306

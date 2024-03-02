@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  mysql:
+    build: 
+      context: .
+      dockerfile: Dockerfile.mysql
+    container_name: mysql_coalize
+    environment:
+      MYSQL_ROOT_PASSWORD: coalize
+      MYSQL_USER: coalize
+      MYSQL_PASSWORD: coalize
+    networks:
+      my_network:
+        ipv4_address: 172.20.0.2
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    container_name: php_coalize
+    networks:
+      my_network:
+        ipv4_address: 172.20.0.3
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
+    volumes:
+      - .:/app
+    command: bash -c "php yii serve 0.0.0.0"
+
+networks:
+  my_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  mysql_data:
