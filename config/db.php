@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
-    'username' => 'root',
-    'password' => '',
+    'dsn' => 'mysql:host=172.20.0.2;dbname=coalize_database;allowPublicKeyRetrieval=true',
+    'username' => 'coalize',
+    'password' => 'coalize',
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)

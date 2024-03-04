@@ -13,8 +13,21 @@ $config = [
     ],
     'components' => [
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'e4Yj3FDWpOe0p0tS9DddFakwjLBX2xmi',
+          'cookieValidationKey' => '07f76c33d1e9a11acdaf08e5bbd6694bbb73378d7cc3d40e537b02d72257250b',
+          'enableCookieValidation' => false,
+          'enableCsrfValidation' => false,  
+          'parsers' => [
+              'application/json' => 'yii\web\JsonParser',
+            ]
+        ],
+        'response' => [
+            'class' => 'yii\web\Response',
+            'format' => yii\web\Response::FORMAT_JSON,
+        ],
+        'user' => [
+            'identityClass' => 'app\models\User',
+            'enableAutoLogin' => false,
+            'enableSession' => false,
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -37,12 +50,29 @@ $config = [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                  'class' => 'yii\log\FileTarget',
+                  'levels' => ['error', 'warning'],
                 ],
             ],
         ],
         'db' => $db,
+        'urlManager' => [
+          'enablePrettyUrl' => true,
+          'enableStrictParsing' => true,
+          'showScriptName' => false,
+          'rules' => [
+            'POST /user/create' => 'user/create',
+            'POST auth/login' => 'auth/login',
+            'POST /cliente/create' => 'cliente/create',
+            'POST /produto/create' => 'produto/create',
+            'DELETE /produto/delete/<id:\d+>' => 'produto/delete',
+            'GET produto/search-by-cliente/<cliente_id:\d+>' => 'produto/search-by-cliente'
+          ],
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
+        
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,
@@ -53,6 +83,7 @@ $config = [
         */
     ],
     'params' => $params,
+
 ];
 
 if (YII_ENV_DEV) {
