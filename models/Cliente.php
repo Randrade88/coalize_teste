@@ -1,45 +1,32 @@
 <?php
+
 namespace app\models;
 
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use app\components\CpfValidator;
+
 class Cliente extends ActiveRecord
 {
-    public static function findIdentity($id)
+  public static function tableName()
   {
-    return static::findOne($id);
+    return 'cliente';
   }
 
-  public static function findIdentityByAccessToken($token, $type = null)
+  public function rules()
   {
-    return static::findOne(['access_token' => $token]);
+    return [
+      [["nome", "cpf"], 'unique'],
+      [["nome", "cpf"], 'required'],
+      [['cpf'], CpfValidator::class],
+      [['nome', 'cep', 'logradouro', 'cidade', 'estado', 'complemento'], 'string', 'max' => 255],
+      [['telefone'], 'string', 'max' => 20],
+      [['foto'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
+      [['sexo'], 'in', 'range' => ['M', 'F']],
+    ];
   }
-
-  public function getId()
+  public function getProdutos()
   {
-    return $this->id;
+    return $this->hasMany(Produto::class, ['cliente_id' => 'id']);
   }
-
-  public function getAuthKey()
-  {
-    // Return the authentication key if your application uses it
-    return $this->auth_key;
-  }
-
-  public function validateAuthKey($authKey)
-  {
-    // Validate the authentication key if your application uses it
-    return $this->auth_key === $authKey;
-  }
-
-    public function rules()
-    {
-        return [
-            [['cpf'], 'string', 'max' => 14],
-            [['nome', 'cep', 'logradouro', 'cidade', 'estado', 'complemento'], 'string', 'max' => 255],
-            [['numero'], 'string', 'max' => 20],
-            [['foto'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
-            [['sexo'], 'in', 'range' => ['M', 'F']],
-        ];
-    }
 }

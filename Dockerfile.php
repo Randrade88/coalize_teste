@@ -9,9 +9,9 @@ RUN apt-get update \
         unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Composer globally
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=1.10.22
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=1.10.22
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 # Set working directory
 WORKDIR /app
 

@@ -18,6 +18,7 @@ $config = [
           'enableCsrfValidation' => false,  
           'parsers' => [
               'application/json' => 'yii\web\JsonParser',
+              'multipart/form-data' => 'yii\web\MultipartFormDataParser',
             ]
         ],
         'response' => [
@@ -47,11 +48,11 @@ $config = [
             'useFileTransport' => true,
         ],
         'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
+            // 'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
                   'class' => 'yii\log\FileTarget',
-                  'levels' => ['error', 'warning'],
+                  'levels' => ['error', 'warning', 'info', 'trace'],
                 ],
             ],
         ],
@@ -61,12 +62,21 @@ $config = [
           'enableStrictParsing' => true,
           'showScriptName' => false,
           'rules' => [
+            'POST /auth/login' => 'auth/login',
             'POST /user/create' => 'user/create',
-            'POST auth/login' => 'auth/login',
-            'POST /cliente/create' => 'cliente/create',
-            'POST /produto/create' => 'produto/create',
-            'DELETE /produto/delete/<id:\d+>' => 'produto/delete',
-            'GET produto/search-by-cliente/<cliente_id:\d+>' => 'produto/search-by-cliente'
+            'GET /user' => 'user/indexs',
+            'PUT /user/edit/<id:\d+>' => 'user/edits',
+            'DELETE /user/delete/<id:\d+>' => 'user/deletes',
+            'POST /cliente/create' => 'cliente/creates',
+            'GET /cliente' => 'cliente/list',
+            'GET /cliente/<id:\d+>' => 'cliente/indexs',
+            'PUT cliente/edit/<id:\d+>' => 'cliente/edits',
+            'DELETE cliente/delete/<id:\d+>' => 'cliente/deletes',
+            'GET /produto' => 'produto/indexs',
+            'POST /produto/create' => 'produto/creates',
+            'PUT /produto/edit/<id:\d+>' => 'produto/edits',
+            'DELETE /produto/delete/<id:\d+>' => 'produto/deletes',
+            'GET /produto/search-by-cliente/<cliente_id:\d+>' => 'produto/search-by-cliente'
           ],
         ],
         'authManager' => [
@@ -92,7 +102,7 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['172.20.0.1', '::1'],
     ];
 
     $config['bootstrap'][] = 'gii';
