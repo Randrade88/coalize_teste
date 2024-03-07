@@ -16,9 +16,9 @@ class Cliente extends ActiveRecord
   public function rules()
   {
     return [
-      [["nome", "cpf"], 'unique'],
-      [["nome", "cpf"], 'required'],
-      [['cpf'], CpfValidator::class],
+      // [["nome", "cpf"], 'unique'],
+      // [["nome", "cpf"], 'required'],
+      // [['cpf'], CpfValidator::class],
       [['nome', 'cep', 'logradouro', 'cidade', 'estado', 'complemento'], 'string', 'max' => 255],
       [['telefone'], 'string', 'max' => 20],
       [['foto'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],

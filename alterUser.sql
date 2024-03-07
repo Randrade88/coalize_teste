@@ -1,0 +1,1 @@
+ALTER USER 'coalize'@'%' IDENTIFIED WITH mysql_native_password BY 'coalize';

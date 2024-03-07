@@ -7,6 +7,7 @@ use yii\web\Response;
 use yii\rest\ActiveController;
 use yii\data\ActiveDataProvider;
 use app\models\Produto;
+use yii\web\UploadedFile;
 
 class ProdutoController extends ActiveController
 {
@@ -64,7 +65,15 @@ class ProdutoController extends ActiveController
     $model = new $this->modelClass;
     $model->load(Yii::$app->request->post(), '');
     $model->user_id = $this->userId;
+    $model->foto = UploadedFile::getInstanceByName('foto');
     if ($model->save()) {
+      if ($model->foto !== null) {
+        $filePath = 'uploads/' . $model->foto->baseName . '.' . $model->foto->extension;
+      $model->foto->saveAs($filePath);
+      $model->foto = $filePath; // Update model attribute with file path
+      $model->save(false); // Save model with file path
+      }
+      
       return ['status' => true, 'data' => $model];
     } else {
       return ['status' => false, 'data' => $model->errors];

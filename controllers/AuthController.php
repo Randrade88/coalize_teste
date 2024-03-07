@@ -10,11 +10,23 @@ use app\models\User;
 
 class AuthController extends Controller
 {
+  public function behaviors()
+  {
+    $behaviors = parent::behaviors();
+
+    // Apply HTTP Bearer authentication only for the 'logout' action
+    $behaviors['authenticator'] = [
+      'class' => HttpBearerAuth::class,
+      'only' => ['logout'],
+    ];
+
+    return $behaviors;
+  }
   public function actionLogin()
   {
     $username = Yii::$app->request->post('username');
     $password_hash = Yii::$app->request->post('password_hash');
-    
+
     if (User::validateCredentials($username, $password_hash)) {
 
       $user = User::findByUsername($username);
@@ -28,6 +40,13 @@ class AuthController extends Controller
       Yii::$app->response->statusCode = 401;
       return ['error' => 'Unauthorized'];
     }
+  }
+
+  public function actionLogout()
+  {
+    Yii::$app->user->logout(Yii::$app->request->getHeaders()->get('Authorization'));
+    Yii::$app->response->format = Response::FORMAT_JSON;
+    return ['message' => 'Logout successful'];
   }
   private function validateCredentials($username, $password_hash)
   {

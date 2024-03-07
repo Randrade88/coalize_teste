@@ -63,6 +63,7 @@ $config = [
           'showScriptName' => false,
           'rules' => [
             'POST /auth/login' => 'auth/login',
+            'POST /auth/logout' => 'auth/logout',
             'POST /user/create' => 'user/create',
             'GET /user' => 'user/indexs',
             'PUT /user/edit/<id:\d+>' => 'user/edits',

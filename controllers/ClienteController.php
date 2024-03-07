@@ -9,6 +9,7 @@ use yii\rest\ActiveController;
 use yii\filters\auth\HttpBearerAuth;
 use app\models\Cliente;
 use app\components\TokenAuth;
+use yii\web\UploadedFile;
 use yii\web\NotFoundHttpException;
 use app\models\Produto;
 
@@ -53,19 +54,29 @@ class ClienteController extends ActiveController
       ->where(['user_id' => $this->userId])
       ->andWhere(['id' => $id])
       ->one();
+    $cliente->load($request->getBodyParams(), '');
+    $uploadedFoto = UploadedFile::getInstanceByName('foto');
+    if ($uploadedFoto !== null) {
+      $cliente->foto = $uploadedFoto;
+    }
 
     if ($cliente === null) {
       Yii::$app->response->setStatusCode(404);
       return ['error' => 'Cliente não encontrado.'];
     }
-    $cliente->load($request->getBodyParams(), '');
 
     if ($cliente->save()) {
+      if ($uploadedFoto !== null) {
+        $filePath = 'uploads/' . $cliente->foto->baseName . '.' . $cliente->foto->extension;
+        $cliente->foto->saveAs($filePath);
+        $cliente->foto = $filePath;
+        $cliente->save(false);
+      }
       Yii::$app->response->setStatusCode(200);
-      return ['status' => 'Client atualizado com sucesso.'];
+      return ['status' => 'Cliente atualizado com sucesso.'];
     } else {
       Yii::$app->response->setStatusCode(422);
-      return ['status' => false ,'error' => $cliente->getErrors()];
+      return ['status' => false, 'error' => $cliente->getErrors()];
     }
   }
 
@@ -98,8 +109,13 @@ class ClienteController extends ActiveController
   {
     $model = new $this->modelClass;
     $model->load(Yii::$app->request->post(), '');
-    $model->user_id = $this->userId;;
+    $model->user_id = $this->userId;
+    $model->foto = UploadedFile::getInstanceByName('foto');
     if ($model->save()) {
+      $filePath = 'uploads/' . $model->foto->baseName . '.' . $model->foto->extension;
+      $model->foto->saveAs($filePath);
+      $model->foto = $filePath; // Update model attribute with file path
+      $model->save(false); // Save model with file path
       return ['status' => true, 'data' => "Cliente cadastrado com sucesso"];
     } else {
       return ['status' => false, 'data' => $model->errors];

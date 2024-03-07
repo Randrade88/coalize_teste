@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=172.20.0.2;dbname=coalize_database;allowPublicKeyRetrieval=true',
+    'dsn' => 'mysql:host=172.20.0.2;dbname=coalize_database',
     'username' => 'coalize',
     'password' => 'coalize',
     'charset' => 'utf8',

@@ -51,26 +51,44 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
   {
     return $this->getAuthKey() === $authKey;
   }
-  
+
   public static function findByUsername($username)
   {
     return static::findOne(['username' => $username]);
   }
-  
+
   public function validatePassword($password)
   {
     return Yii::$app->security->validatePassword($password, $this->password_hash);
   }
   public static function validateCredentials($username, $password_hash)
-  {return ['wwtoken' => $password_hash];
-      $user = static::findOne(['username' => $username]);
-      if ($user !== null) {
-          return Yii::$app->security->validatePassword($password_hash, $user->password_hash);
-      }
-      return false;
+  {
+    return ['wwtoken' => $password_hash];
+    $user = static::findOne(['username' => $username]);
+    if ($user !== null) {
+      return Yii::$app->security->validatePassword($password_hash, $user->password_hash);
+    }
+    return false;
   }
   public function generateToken($username)
   {
     return Yii::$app->security->generateRandomString();
+  }
+  public static function logout($authToken)
+  {
+    $user = static::findOne(['token' => $authToken]);
+    if ($user !== null) {
+      $user->auth_token = null; 
+      if ($user->save()) {
+        return true;
+      } else {
+        Yii::error('Falha ao fazer logout: ' . print_r($user->errors, true));
+      }
+    } else {
+      Yii::error('Não foi possível fazer logout : token=' . $authToken);
+    }
+
+    // Logout failed
+    return false;
   }
 }

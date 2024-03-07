@@ -1,12 +1,16 @@
 version: '3'
 
 services:
+  
+  
   mysql:
     build: 
       context: .
       dockerfile: Dockerfile.mysql
+    restart: always
     container_name: mysql_coalize
     environment:
+      MYSQL_HOST: mysql
       MYSQL_ROOT_PASSWORD: coalize
       MYSQL_USER: coalize
       MYSQL_PASSWORD: coalize
@@ -17,7 +21,8 @@ services:
       - 3306:3306
     volumes:
       - mysql_data:/var/lib/mysql
-
+      - ./alterUser.sql:/docker-entrypoint-initdb.d/alterUser.sql
+  
   php:
     build:
       context: .
@@ -32,7 +37,9 @@ services:
       - mysql
     volumes:
       - .:/app
-    command: bash -c "php yii serve 0.0.0.0"
+    command: bash -c "sleep 5; php yii migrate --interactive=0 ; php yii serve 0.0.0.0"
+
+  
 
 networks:
   my_network:
